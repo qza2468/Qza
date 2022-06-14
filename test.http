@@ -1,0 +1,44 @@
+GET localhost:18888/
+###
+POST localhost:18888/api/login HTTP/1.1
+
+{"username": "qza2468", "password": "2468"}
+
+###
+POST localhost:18888/api/createuser
+token: OIak81AJBwfHiMD6r7gEfOQRli7xWMZue7dm9n5IhiXN2lRtq77UUWvDE28jMhb0
+
+{"username": "bbb", "password": "8888"}
+
+###
+POST localhost:18888/api/login HTTP/1.1
+
+{"username": "bbb", "password": "8888"}
+
+###
+POST localhost:18888/api/logout
+token: E8rXOg0jTAfXCU5aZelTDWyHfm5YSAOhIFEevDMML1uXVz64brVoLU51E8ZgJvNZ
+
+{"tokens_to_delete": ["xHBlALH9M0YEWKgTeAdWA3M7v8xSve0qvBb5XsDrrj5N3loftSB4TV9Oe6rXkrNd", "uKAkgfNYi3qEStmOaUW2EcZGwuTyyg2q0AaeqvCWz0lRuVnUxKUCu2SqwtmsZoiX"]}
+
+###
+GET localhost:18888/api/listTokens
+all: aaa
+token: E8rXOg0jTAfXCU5aZelTDWyHfm5YSAOhIFEevDMML1uXVz64brVoLU51E8ZgJvNZ
+
+###
+POST localhost:18888/api/alterUser
+token: QHhQVW5k8QqyfRLEUTCqfEMVgNCIx8EMPwmtSrdYFRXuqq9KIJAxXUQDscTnji96
+
+{"username": "aaa", "password": ""}
+
+###
+GET localhost:18888/api/listUsers
+token: AuFW81MeYKoTmom35VET0WOMmh26sOO2GbXPct18BpbxbMygrC7qhVCTCEX4cv7s
+
+###
+POST localhost:18888/api/upload
+token: hN33h8DtDP44kqzxmbGwDuUqWGqyYi1D55GkBUdMrgRcWQXGznCBge1CupAQXAdd
+file-path: L21tbW1tLnR4dA==
+
+Hello, World
