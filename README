@@ -1,3 +1,8 @@
 i know it will become incredible
 
-a c++ web server!!!
+a c++17 web server!!!
+
+how to compile?
+1. install `crow` `boost` and `libzdb`
+2. update `g++` to version beyond or equal to 9
+3. g++-9 main.cpp login.cpp file.cpp -lpthread -I/usr/local/include/zdb -std=c++17 -lzdb -lcrypto -lboost_system
