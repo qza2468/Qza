@@ -86,7 +86,7 @@ crow::response create_file_route(const crow::request &req) {
         return {401, "you are not a user, but hello!"};
     }
 
-    crow::response path_resp = check_path(req);
+    crow::response path_resp = check_path(req, "file-path");
     if (path_resp.code != 200) {
         return path_resp;
     }
@@ -120,27 +120,121 @@ crow::response unlink_route(const crow::request &req) {
         return {401, "you are not a user, but hello!"};
     }
 
-    crow::response path_resp = check_path(req);
+    bool dir_all = false;
+    {
+        auto iter = req.headers.find("dir-all");
+        if (iter != req.headers.end()) {
+            dir_all = true;
+        }
+    }
+
+    crow::response path_resp = check_path(req, "file-path");
     if (path_resp.code != 200) {
         return path_resp;
     }
     string filePathStr = path_resp.body;
 
     error_code errorCode;
-    bool ok = filesystem::remove(filePathStr, errorCode);
+    bool ok;
+    if (not dir_all) {
+        ok = filesystem::remove(filePathStr, errorCode);
+    } else {
+        ok = filesystem::remove_all(filePathStr, errorCode);
+    }
+
     if (ok) {
         return {200, "ok"};
     } else {
-        return {404, string("delete error: ") + errorCode.message()};
+        return {404, errorCode.message()};
     }
 }
 
-crow::response check_path(const crow::request &req) {
+crow::response rename_file_route(const crow::request &req) {
+    string username = check_token(req).name;
+    if (username.empty()) {
+        return {401, "you are not a user, but hello!"};
+    }
+
+    crow::response path_resp = check_path(req, "file-path");
+    if (path_resp.code != 200) {
+        return path_resp;
+    }
+    string filePathStr = path_resp.body;
+
+    crow::response path_resp_new = check_path(req, "file-path-new");
+    if (path_resp_new.code != 200) {
+        return path_resp_new;
+    }
+    string filePathStr_new = path_resp_new.body;
+
+    error_code errorCode;
+    bool ok;
+    filesystem::rename(filePathStr, filePathStr_new, errorCode);
+    if (errorCode) {
+        return {404, errorCode.message()};
+    }
+
+    return {200, "ok"};
+}
+
+crow::response download_file_route(const crow::request &req) {
+    string username = check_token(req).name;
+    if (username.empty()) {
+        return {401, "you are not a user, but hello!"};
+    }
+
+    crow::response path_resp = check_path(req, "file-path");
+    if (path_resp.code != 200) {
+        return path_resp;
+    }
+    string filePathStr = path_resp.body;
+
+    crow::response resp(200);
+    resp.set_static_file_info_unsafe(filePathStr);
+
+    return resp;
+}
+
+crow::response list_dir_route(const crow::request &req) {
+    string username = check_token(req).name;
+    if (username.empty()) {
+        return {401, "you are not a user, but hello!"};
+    }
+
+    crow::response path_resp = check_path(req, "file-path");
+    if (path_resp.code != 200) {
+        return path_resp;
+    }
+    string filePathStr = path_resp.body;
+
+    vector<crow::json::wvalue> res_list;
+    try {
+        for (const auto &entry: filesystem::directory_iterator(filePathStr)) {
+            if (not(entry.is_directory() or entry.is_regular_file())) {
+                continue;
+            }
+            crow::json::wvalue item_dict;
+            item_dict["name"] = entry.path().filename().string();
+            item_dict["file-size"] = entry.is_regular_file() ? entry.file_size() : 4096;
+            item_dict["type"] = entry.is_regular_file() ? "file" : (entry.is_directory() ? "directory" : "");
+            res_list.emplace_back(item_dict);
+        }
+    } catch (const filesystem::filesystem_error &e) {
+        return {404, e.what()};
+    }
+
+    crow::json::wvalue res_json;
+    res_json["items"] = crow::json::wvalue(res_list);
+
+    return res_json;
+}
+
+crow::response check_path(const crow::request &req, const string& header_key) {
     Path_QZA path("/home/qza2468/");
 
     string filePath_base64;
     {
-        auto iter = req.headers.find("file-path");
+        auto iter = req.headers.find(header_key);
         if (iter != req.headers.end()) {
             filePath_base64 = iter->second;
         }
@@ -157,7 +251,7 @@ crow::response check_path(const crow::request &req) {
     if (not Path_QZA::validate(filePathStr)) {
         return {404, "filePath should only contain alpha, num and punctuation"};
     }
-    path += filePathStr;
+    path += Path_QZA(filePathStr);
     filePathStr = path.to_str();
 
     return {200, filePathStr};

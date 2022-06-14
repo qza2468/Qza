@@ -13,7 +13,7 @@
 class Path_QZA {
 public:
     std::vector<std::string> paths;
-    Path_QZA(const std::string &s);
+    explicit Path_QZA(const std::string &s);
     Path_QZA() = default;
     std::string to_str();
     static bool validateBase64(const std::string &s);
@@ -21,10 +21,16 @@ public:
     Path_QZA &operator+= (const Path_QZA &path1);
 };
 
-crow::response check_path(const crow::request &req);
+crow::response check_path(const crow::request &req,  const std::string& header_key);
 
 crow::response create_file_route(const crow::request &req);
 
-crow::response unlink_file_route(const crow::request &req);
+crow::response unlink_route(const crow::request &req);
+
+crow::response rename_file_route(const crow::request &req);
+
+crow::response download_file_route(const crow::request &req);
+
+crow::response list_dir_route(const crow::request &req);
 
 #endif //UNTITLED8_FILE_H

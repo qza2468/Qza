@@ -32,6 +32,11 @@ int main() {
     CROW_ROUTE(app, "/api/listUsers").methods(crow::HTTPMethod::GET)(list_users_route);
 
     CROW_ROUTE(app, "/api/upload").methods(crow::HTTPMethod::POST)(create_file_route);
+    CROW_ROUTE(app, "/api/delete").methods(crow::HTTPMethod::POST)(unlink_route);
+    CROW_ROUTE(app, "/api/rename").methods(crow::HTTPMethod::POST)(rename_file_route);
+    CROW_ROUTE(app, "/api/download").methods(crow::HTTPMethod::POST)(download_file_route);
+    CROW_ROUTE(app, "/api/listdir").methods(crow::HTTPMethod::GET)(list_dir_route);
+
 
     app.port(18888).multithreaded().run();
 }
