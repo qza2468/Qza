@@ -23,6 +23,8 @@ int main() {
     SQLpool = new zdb::ConnectionPool(DEBUG_SQL_PATH);
     SQLpool->start();
 
+    login_pre_run();
+
     CROW_ROUTE(app, "/")(hello);
     CROW_ROUTE(app, "/api/login").methods(crow::HTTPMethod::POST)(login_route);
     CROW_ROUTE(app, "/api/createuser").methods(crow::HTTPMethod::POST)(create_user_route);
@@ -32,6 +34,7 @@ int main() {
     CROW_ROUTE(app, "/api/listUsers").methods(crow::HTTPMethod::GET)(list_users_route);
 
     CROW_ROUTE(app, "/api/upload").methods(crow::HTTPMethod::POST)(create_file_route);
+    CROW_ROUTE(app, "/api/mkdir").methods(crow::HTTPMethod::POST)(mkdir_route);
     CROW_ROUTE(app, "/api/delete").methods(crow::HTTPMethod::POST)(unlink_route);
     CROW_ROUTE(app, "/api/rename").methods(crow::HTTPMethod::POST)(rename_file_route);
     CROW_ROUTE(app, "/api/download").methods(crow::HTTPMethod::POST)(download_file_route);

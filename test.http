@@ -11,7 +11,7 @@ token: OIak81AJBwfHiMD6r7gEfOQRli7xWMZue7dm9n5IhiXN2lRtq77UUWvDE28jMhb0
 {"username": "bbb", "password": "8888"}
 
 ###
-POST http://180.76.115.230:18888/api/login HTTP/1.1
+POST localhost:18888/api/login HTTP/1.1
 
 {"username": "bbb", "password": "8888"}
 
@@ -38,8 +38,8 @@ token: AuFW81MeYKoTmom35VET0WOMmh26sOO2GbXPct18BpbxbMygrC7qhVCTCEX4cv7s
 
 ###
 POST localhost:18888/api/upload
-token: WCKs109C4WUMZncFrbPhtBgbuBZxok6LwQByPK8RpalOOLbDwyso7YN1jwwWg2pd
-file-path: L0Rvd25sb2Fkcy9tbW1tbUFwcC50eHQ=
+token: xMbo0RX7VGC4ocyJx3qc4xEPVpyUycGvzrixJF2mTFoGrmZoqOOsJaHpPEJMqXFn
+file-path: Li4vLi4vLi4vLi4vYWFhL2NjYy50eHQ=
 
 Hello, World
 
@@ -57,13 +57,18 @@ file-path: L0Rvd25sb2Fkcy9tbW1tbUFwcC50eHQ=
 
 ###
 POST localhost:18888/api/download
-token: WZzz5VsPb23fQ5GpG4r5J2VJOSBH2H8Zq7YtbOICOJrnP7adAPiTRBknbw4dBDAz
-file-path: L0Rvd25sb2Fkcy9tbW1tbUFwcC50eHQ=
+token: xMbo0RX7VGC4ocyJx3qc4xEPVpyUycGvzrixJF2mTFoGrmZoqOOsJaHpPEJMqXFn
+file-path: Li4vLi4vLi4vLi4vYWFhL2NjY2MudHh0
 
 ###
-POST localhost:18000/aaa
+POST localhost:18000/
 
 ###
 GET 180.76.115.230:18888/api/listdir
 token: dIDy2QTBVU7q4GEXLof2qJqlbWEvYEDBWO7YpahK2o863McO8HQzYFk9lz2HDFRh
 file-path: Lw==
+
+###
+POST localhost:18888/api/mkdir
+token: xMbo0RX7VGC4ocyJx3qc4xEPVpyUycGvzrixJF2mTFoGrmZoqOOsJaHpPEJMqXFn
+file-path: Li4vLi4vLi4vLi4vfnF6YTI0Njg=

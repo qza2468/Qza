@@ -12,6 +12,9 @@
 #include <unistd.h>
 #include <chrono>
 #include <string>
+#include <filesystem>
+
+#include "Path_QZA.h"
 
 using namespace crow;
 using namespace std;
@@ -97,7 +100,6 @@ crow::response create_user_route(const crow::request &req) {
         return {404, "username and password should not be empty"};
     }
 
-    CROW_LOG_INFO << crypt_str(password) << "................" << password;
     try {
         zdb::Connection con(SQLpool->getConnection());
         con.execute("INSERT INTO " USERS_SQL_TABLE_NAME " (username, password) VALUES(?, ?);", username.c_str(),
@@ -259,7 +261,7 @@ NameExpire check_token(const crow::request &req) {
     if (iter == req.headers.end()) {
         return {};
     }
-    return check_token(req.headers.find("token")->second);
+    return check_token(iter->second);
 }
 
 UserInfo find_user(const string &username) {
@@ -279,3 +281,21 @@ UserInfo find_user(const string &username) {
     }
     return {username_, password_};
 }
+
+void login_pre_run() {
+    CROW_LOG_INFO << "creating directories for the users";
+    Path_QZA basedir(BASE_DIR);
+
+    auto con = SQLpool->getConnection();
+    auto res = con.executeQuery("SELECT * FROM " USERS_SQL_TABLE_NAME);
+
+    while (res.next()) {
+        auto name = res.getString("username");
+        Path_QZA user_dir = basedir;
+        user_dir += Path_QZA(name);
+        filesystem::create_directory(user_dir.to_str());
+    }
+
+    CROW_LOG_INFO << "directories created ok";
+}
+

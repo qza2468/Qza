@@ -27,6 +27,8 @@ public:
     UserInfo() = default;
 };
 
+void login_pre_run();
+
 crow::response login_route(const crow::request &req);
 crow::response create_user_route(const crow::request &req);
 crow::response logout_route(const crow::request &req);

@@ -14,11 +14,11 @@
 #include "login.h"
 
 #define SQL_PATH "mysql://qza2468:2468802225@localhost:3306/mysql"
-#define DEBUG_SQL_PATH "sqlite:///home/qza2468/CLionProjects/untitled8/aaa.db"
+#define DEBUG_SQL_PATH "sqlite:///home/qza2468/SourceCode/app_server/aaa.db"
 #define USERS_SQL_TABLE_NAME "user_wow"
 #define CRYPTO_SALT "2468802225"
 #define TOKEN_LEN 64
-#define BASE_DIR /home/qza2468/test/
+#define BASE_DIR "/home/qza2468/SourceCode/app_server/testDir"
 
 #define TOKEN_TIMEOUT_DEFAULT 48 * 60 * 60
 
