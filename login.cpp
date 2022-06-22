@@ -95,6 +95,10 @@ crow::response create_user_route(const crow::request &req) {
     }
 
     crow::json::rvalue body_json = json::load(req.body);
+    if (validate_username(body_json["username"].s())) {
+        return {404, "invalid user name!"};
+    }
+
     string username(body_json["username"].s()), password(body_json["password"].s());
     if (username.empty() or password.empty()) {
         return {404, "username and password should not be empty"};
@@ -102,14 +106,41 @@ crow::response create_user_route(const crow::request &req) {
 
     try {
         zdb::Connection con(SQLpool->getConnection());
-        con.execute("INSERT INTO " USERS_SQL_TABLE_NAME " (username, password) VALUES(?, ?);", username.c_str(),
-                    crypt_str(password).c_str());
-    } catch (const zdb::sql_exception &exception) {
-        return {404, exception.what()};
+        con.execute("INSERT INTO " USERS_SQL_TABLE_NAME " (username, password)"
+                                                        " SELECT ?, ? "
+                                                        " WHERE NOT EXISTS(SELECT 1 FROM " USERS_SQL_TABLE_NAME " WHERE useranme = ?",
+                                                        username.c_str(), crypt_str(password).c_str(), username.c_str());
+        create_user_dir(username); // TODO: maybe i should use mkdir.
+    } catch (const std::exception &e) {
+        return {404, e.what()};
     }
 
     return {200, "ok"};
 }
+
+crow::response delete_user_route(const request &req) {
+    NameExpire name_expire = check_token(req);
+    if (name_expire.name != "qza2468") {
+        return {401, "you are not qza2468, you don't have the priority"};
+    }
+
+    crow::json::rvalue body_json = json::load(req.body);
+    if (validate_username(body_json["username"].s())) {
+        return {404, "invalid user name!"};
+    }
+
+    string username(body_json["username"].s());
+    try {
+        zdb::Connection con(SQLpool->getConnection());
+        con.execute("DELETE FROM " USERS_SQL_TABLE_NAME " WHERE username = ?", username.c_str());
+        mv_user_dir(username); // TODO: something should been down if mv_user_dir failed!.
+    } catch (const std::exception &e) {
+        return {404, e.what()};
+    }
+
+    return {200, "ok"};
+}
+
 
 crow::response alter_user_route(const crow::request &req) {
     NameExpire name_expire = check_token(req);
@@ -284,18 +315,51 @@ UserInfo find_user(const string &username) {
 
 void login_pre_run() {
     CROW_LOG_INFO << "creating directories for the users";
-    Path_QZA basedir(BASE_DIR);
 
     auto con = SQLpool->getConnection();
     auto res = con.executeQuery("SELECT * FROM " USERS_SQL_TABLE_NAME);
 
     while (res.next()) {
         auto name = res.getString("username");
-        Path_QZA user_dir = basedir;
-        user_dir += Path_QZA(name);
-        filesystem::create_directory(user_dir.to_str());
+        create_user_dir(name);
     }
 
     CROW_LOG_INFO << "directories created ok";
+}
+
+void create_user_dir(const string &name) {
+    if (name.empty()) {
+        return;
+    }
+
+    Path_QZA user_dir(BASE_DIR);
+    user_dir += Path_QZA(name);
+    filesystem::create_directory(user_dir.to_str());
+}
+
+void mv_user_dir(const string &name) {
+    if (name.empty()) {
+        return;
+    }
+
+    Path_QZA user_dir(BASE_DIR);
+    user_dir += Path_QZA(name);
+    Path_QZA user_to_dir(BASE_DIR);
+    user_to_dir += Path_QZA("." + name + '.' + to_string(time(NULL)) + '.' + to_string(rand()));
+    filesystem::rename(user_dir.to_str(), user_to_dir.to_str());
+}
+
+bool validate_username(const string &name) {
+    for (const auto &c: name) {
+        if (c == '/' or c == '\0' or c =='\\' or c == '.' or c == '@') {
+            return false;
+        }
+    }
+
+    if (name.empty()) {
+        return false;
+    }
+
+    return true;
 }
 

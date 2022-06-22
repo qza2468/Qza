@@ -28,9 +28,13 @@ public:
 };
 
 void login_pre_run();
+void create_user_dir(const std::string &name);
+void mv_user_dir(const std::string &name);
+bool validate_username(const std::string &name);
 
 crow::response login_route(const crow::request &req);
 crow::response create_user_route(const crow::request &req);
+crow::response delete_user_route(const crow::request &req);
 crow::response logout_route(const crow::request &req);
 crow::response list_tokens_route(const crow::request &req);
 crow::response alter_user_route(const crow::request &req);

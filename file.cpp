@@ -108,7 +108,7 @@ crow::response rename_file_route(const crow::request &req) {
     string filePathStr_new = path_resp_new.body;
 
     try {
-        filesystem::rename(filePathStr, filePathStr_new, errorCode);
+        filesystem::rename(filePathStr, filePathStr_new);
     } catch (const exception &e) {
         return {404, e.what()};
     }
