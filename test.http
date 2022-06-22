@@ -72,3 +72,19 @@ file-path: Lw==
 POST localhost:18888/api/mkdir
 token: xMbo0RX7VGC4ocyJx3qc4xEPVpyUycGvzrixJF2mTFoGrmZoqOOsJaHpPEJMqXFn
 file-path: Li4vLi4vLi4vLi4vfnF6YTI0Njg=
+
+###
+POST localhost:18888/api/base64Service/store
+token: WSRrRCD5pYKPGgMgVwzoiYFXS5RuqRBMtaBIkNNXthwANGqqDqevMtQmxsfnJq7B
+comment-q: cccc89922
+
+fljksadfjkawoipafoiefpaj
+
+###
+POST localhost:18888/api/base64Service/listKeys
+token: bZbbW531Cv2BLSvEKO7cXkAGb6FwnSsPzUyWZ1VjwXuFznUIAZufH3wt9BnwceJZ
+
+###
+POST localhost:18888/api/base64Service/get
+token: bZbbW531Cv2BLSvEKO7cXkAGb6FwnSsPzUyWZ1VjwXuFznUIAZufH3wt9BnwceJZ
+comment-q: cccc89{}

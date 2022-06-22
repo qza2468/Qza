@@ -10,4 +10,8 @@
 #include <string>
 
 crow::response store_value_route(const crow::request &req);
+crow::response get_info_route(const crow::request &req);
+crow::response get_value_route(const crow::request &req);
+
+
 #endif //UNTITLED8_DATASTORE_H

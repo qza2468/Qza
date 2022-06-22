@@ -62,7 +62,7 @@ crow::response get_value_route(const crow::request &req) {
 
     auto conn = SQLpool->getConnection();
     auto res = conn.executeQuery("SELECT * FROM vvv WHERE username = ? AND comment_q = ?",
-                                 username.c_str(), comment);
+                                 username.c_str(), comment.c_str());
 
     vector<crow::json::wvalue> l;
     while (res.next()) {

@@ -4,6 +4,7 @@
 #include "login.h"
 #include "config_qza.h"
 #include "file.h"
+#include "dataStore.h"
 
 
 zdb::ConnectionPool *SQLpool;
@@ -40,6 +41,9 @@ int main() {
     CROW_ROUTE(app, "/api/download").methods(crow::HTTPMethod::POST)(download_file_route);
     CROW_ROUTE(app, "/api/listdir").methods(crow::HTTPMethod::GET)(list_dir_route);
 
+    CROW_ROUTE(app, "/api/base64Service/store").methods(crow::HTTPMethod::POST)(store_value_route);
+    CROW_ROUTE(app, "/api/base64Service/listKeys").methods(crow::HTTPMethod::POST)(get_info_route);
+    CROW_ROUTE(app, "/api/base64Service/get").methods(crow::HTTPMethod::POST)(get_value_route);
 
     app.port(18888).multithreaded().run();
 }
